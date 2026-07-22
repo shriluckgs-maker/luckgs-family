@@ -1,0 +1,69 @@
+/* ===========================================
+   DASHBOARD
+=========================================== */
+
+.dashboard{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:30px;
+
+}
+
+/* Dashboard Sections */
+
+.dashboard-section{
+
+    margin-top:10px;
+
+}
+
+/* KPI Grid */
+
+.dashboard-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+
+}
+
+/* AI */
+
+.ai-section{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+/* Contacts */
+
+.contacts-section{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+/* Quick Actions */
+
+.quick-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:20px;
+
+}

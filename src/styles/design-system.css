@@ -1,0 +1,84 @@
+/* ==========================================
+   LUCK-G'S AI DESIGN SYSTEM
+========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+:root{
+
+/* Brand */
+
+--primary:#6B1525;
+--primary-dark:#4E0F1B;
+
+--gold:#D4AF37;
+
+--background:#F7F5F2;
+
+--surface:#FFFFFF;
+
+/* Text */
+
+--text:#1F2937;
+--text-light:#6B7280;
+
+/* Status */
+
+--success:#22C55E;
+--warning:#F59E0B;
+--danger:#EF4444;
+--info:#3B82F6;
+
+/* Radius */
+
+--radius-sm:10px;
+--radius-md:16px;
+--radius-lg:22px;
+
+/* Shadow */
+
+--shadow:
+
+0 10px 25px rgba(0,0,0,.08);
+
+/* Transition */
+
+--transition:.3s ease;
+
+}
+
+*{
+
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+}
+
+body{
+
+font-family:'Poppins',sans-serif;
+
+background:var(--background);
+
+color:var(--text);
+
+}
+
+a{
+
+text-decoration:none;
+
+color:inherit;
+
+}
+
+button{
+
+font-family:inherit;
+
+cursor:pointer;
+
+}
