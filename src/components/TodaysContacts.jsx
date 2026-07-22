@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 
+import {
+  Cake,
+  Phone,
+  MessageCircle,
+  User,
+} from "lucide-react";
+
 function TodaysContacts() {
 
   const [customers, setCustomers] = useState([]);
@@ -40,61 +47,99 @@ function TodaysContacts() {
 
   return (
 
-    <div className="contacts-section">
+    <section className="contacts-section">
 
-      <h2>📞 Today's Contacts</h2>
+      <div className="section-header">
+
+        <div>
+
+          <h2>Today's Contacts</h2>
+
+          <p>Customers requiring your attention today.</p>
+
+        </div>
+
+      </div>
 
       {customers.length === 0 ? (
 
-        <div className="contact-card">
+        <div className="contact-empty">
 
-          <h3>🎉 Great!</h3>
+          <Cake size={42} />
 
-          <p>No birthdays today.</p>
+          <h3>No Birthdays Today</h3>
+
+          <p>
+            Great! Use today to register new families
+            and reconnect with existing customers.
+          </p>
 
         </div>
 
       ) : (
 
-        customers.map(customer => (
+        <div className="contacts-grid">
 
-          <div
-            key={customer.id}
-            className="contact-card"
-          >
+          {customers.map(customer => (
 
-            <div>
+            <div
+              key={customer.id}
+              className="contact-card"
+            >
 
-              <h3>{customer.name}</h3>
+              <div className="contact-avatar">
 
-              <p>🎂 Birthday Today</p>
+                <User size={28} />
+
+              </div>
+
+              <div className="contact-details">
+
+                <h3>{customer.name}</h3>
+
+                <p>
+
+                  <Cake size={15} />
+
+                  Birthday Today
+
+                </p>
+
+                <p>
+
+                  <Phone size={15} />
+
+                  {customer.mobile}
+
+                </p>
+
+              </div>
+
+              <button
+                className="contact-btn"
+                onClick={() =>
+                  window.open(
+                    `https://wa.me/91${customer.mobile}`,
+                    "_blank"
+                  )
+                }
+              >
+
+                <MessageCircle size={18} />
+
+                WhatsApp
+
+              </button>
 
             </div>
 
-            <button
+          ))}
 
-              className="contact-btn"
-
-              onClick={() =>
-                window.open(
-                  `https://wa.me/91${customer.mobile}`,
-                  "_blank"
-                )
-              }
-
-            >
-
-              💬 Wish
-
-            </button>
-
-          </div>
-
-        ))
+        </div>
 
       )}
 
-    </div>
+    </section>
 
   );
 

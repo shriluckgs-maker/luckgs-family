@@ -1,58 +1,85 @@
+import { Brain, Lightbulb, ArrowRight } from "lucide-react";
+
 function AIInsights({ insights }) {
-
   return (
+    <section className="ai-section">
 
-    <div className="ai-section">
+      <div className="section-header">
 
-      <h2>
-        🤖 Today's Business Insights
-      </h2>
+        <div>
+
+          <h2>AI Business Assistant</h2>
+
+          <p>
+            Smart recommendations to help grow LUCK-G'S.
+          </p>
+
+        </div>
+
+      </div>
 
       {insights.length === 0 ? (
 
-        <div className="ai-card">
+        <div className="ai-empty">
 
-          <h3>
-            No Insights
-          </h3>
+          <Brain size={42} />
+
+          <h3>No Insights Available</h3>
 
           <p>
-            Customer insights will appear here.
+            As your customer database grows,
+            AI recommendations will appear here.
           </p>
 
         </div>
 
       ) : (
 
-        insights.map((item, index) => (
+        <div className="ai-grid">
 
-          <div
-            key={index}
-            className="ai-card"
-          >
+          {insights.map((item, index) => (
 
-            <h3>
-              {item.title}
-            </h3>
+            <div
+              key={index}
+              className="ai-card"
+            >
 
-            <p>
-              {item.message}
-            </p>
+              <div className="ai-icon">
 
-            <strong>
-              {item.action}
-            </strong>
+                <Lightbulb size={22} />
 
-          </div>
+              </div>
 
-        ))
+              <h3>
+                {item.title}
+              </h3>
+
+              <p>
+                {item.message}
+              </p>
+
+              <div className="ai-action">
+
+                <span>
+
+                  {item.action}
+
+                </span>
+
+                <ArrowRight size={16} />
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
 
       )}
 
-    </div>
-
+    </section>
   );
-
 }
 
 export default AIInsights;

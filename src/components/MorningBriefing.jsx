@@ -1,42 +1,98 @@
 function MorningBriefing({ stats, insights }) {
 
-  const greeting = () => {
-    const hour = new Date().getHours();
+  const hour = new Date().getHours();
 
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
-  };
+  let greeting = "Good Evening";
+
+  if (hour < 12) greeting = "Good Morning";
+  else if (hour < 17) greeting = "Good Afternoon";
+
+  const today = new Date().toLocaleDateString("en-IN", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
 
-    <div className="briefing-card">
+    <div className="morning-card">
 
-      <h2>
-        👋 {greeting()}, Rakesh
-      </h2>
+      <div className="morning-top">
 
-      <p>
+        <div>
 
-        Today you have
+          <span className="welcome-tag">
 
-        <strong> {stats.birthdaysToday} birthday(s)</strong>
+            👋 {greeting}, Rakesh
 
-        and
+          </span>
 
-        <strong> {stats.totalCustomers} total members</strong>.
+          <h1>
 
-      </p>
+            Ready to grow LUCK-G'S today?
+
+          </h1>
+
+          <p>
+
+            {today}
+
+          </p>
+
+        </div>
+
+      </div>
+
+      <div className="morning-summary">
+
+        <div className="summary-box">
+
+          <h2>{stats.totalCustomers}</h2>
+
+          <span>Total Customers</span>
+
+        </div>
+
+        <div className="summary-box">
+
+          <h2>{stats.birthdaysToday}</h2>
+
+          <span>Birthdays Today</span>
+
+        </div>
+
+        <div className="summary-box">
+
+          <h2>{stats.newMembers}</h2>
+
+          <span>New Members</span>
+
+        </div>
+
+      </div>
 
       {insights.length > 0 && (
 
-        <div className="briefing-tip">
+        <div className="focus-card">
 
-          💡 <strong>Today's Focus</strong>
+          <h3>
 
-          <br /><br />
+            🎯 Today's Focus
 
-          {insights[0].action}
+          </h3>
+
+          <p>
+
+            {insights[0].message}
+
+          </p>
+
+          <strong>
+
+            {insights[0].action}
+
+          </strong>
 
         </div>
 

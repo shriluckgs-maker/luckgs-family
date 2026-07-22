@@ -1,54 +1,60 @@
-function Header({ businessHealth }) {
+import { CalendarDays, Sparkles } from "lucide-react";
 
+function Header({ businessHealth }) {
   const today = new Date();
 
-  const options = {
+  const date = today.toLocaleDateString("en-IN", {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
-  };
+  });
 
   return (
+    <div className="header-card">
 
-    <div className="dashboard-header">
+      <div className="header-left">
 
-      <div className="header-top">
+        <span className="brand-tag">
+          LUCK-G'S AI
+        </span>
 
-        <div>
+        <h1>
+          Customer Growth Platform
+        </h1>
 
-          <h1>
-            👋 Good Morning, Rakesh
-          </h1>
+        <div className="header-date">
 
-          <p className="header-date">
-            {today.toLocaleDateString("en-IN", options)}
-          </p>
+          <CalendarDays size={18} />
+
+          <span>{date}</span>
 
         </div>
 
-        <div className="health-card">
+      </div>
 
-          <span className="health-title">
-            Business Health
-          </span>
+      <div className="header-right">
 
-          <span className="health-score">
-            ⭐ {businessHealth.score}%
-          </span>
+        <div className="health-box">
 
-          <small>
-            {businessHealth.message}
-          </small>
+          <Sparkles size={20} />
+
+          <div>
+
+            <small>Business Health</small>
+
+            <h2>{businessHealth.score}%</h2>
+
+            <p>{businessHealth.message}</p>
+
+          </div>
 
         </div>
 
       </div>
 
     </div>
-
   );
-
 }
 
 export default Header;

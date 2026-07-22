@@ -1,13 +1,24 @@
 import DashboardCard from "./DashboardCard";
 
 import {
+
   Users,
+
   Cake,
+
   UserPlus,
-  Star,
+
+  ShieldCheck,
+
 } from "lucide-react";
 
-function DashboardGrid({ stats }) {
+function DashboardGrid({
+
+  stats,
+
+  businessHealth,
+
+}) {
 
   return (
 
@@ -16,29 +27,33 @@ function DashboardGrid({ stats }) {
       <DashboardCard
         title="Members"
         value={stats.totalCustomers}
-        subtitle="Registered Customers"
-        icon={<Users size={28} />}
+        subtitle="Registered Families"
+        icon={<Users size={30} />}
+        color="#2563EB"
       />
 
       <DashboardCard
-        title="Birthdays"
+        title="Today's Birthdays"
         value={stats.birthdaysToday}
-        subtitle="Today"
-        icon={<Cake size={28} />}
+        subtitle="Celebrate your customers"
+        icon={<Cake size={30} />}
+        color="#EC4899"
       />
 
       <DashboardCard
         title="New Members"
         value={stats.newMembers}
-        subtitle="This Month"
-        icon={<UserPlus size={28} />}
+        subtitle="Growing every day"
+        icon={<UserPlus size={30} />}
+        color="#22C55E"
       />
 
       <DashboardCard
-        title="Business Score"
-        value="92%"
-        subtitle="Excellent"
-        icon={<Star size={28} />}
+        title="Business Health"
+        value={`${businessHealth.score}%`}
+        subtitle={businessHealth.message}
+        icon={<ShieldCheck size={30} />}
+        color="#D4AF37"
       />
 
     </div>

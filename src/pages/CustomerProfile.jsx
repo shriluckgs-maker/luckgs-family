@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
-import "./home.css";
+import "./customerProfile.css";
 import CustomerTimeline from "../components/customer/CustomerTimeline";
+import Loader from "../components/ui/Loader";
 
 function CustomerProfile({ customerId, onBack, onEdit }) {
 
@@ -45,11 +46,10 @@ function CustomerProfile({ customerId, onBack, onEdit }) {
   if (!customer) {
 
     return (
-      <div className="home">
-        <div className="card">
-          Loading...
-        </div>
-      </div>
+      <Loader
+      text="Loading customer profile..."
+      size="large"
+       />
     );
 
   }

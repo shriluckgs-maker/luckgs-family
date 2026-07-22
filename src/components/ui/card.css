@@ -1,0 +1,36 @@
+.ui-card{
+    background:#fff;
+    border-radius:20px;
+    padding:24px;
+    box-shadow:0 12px 30px rgba(15,23,42,.08);
+    border:1px solid #E5E7EB;
+    transition:all .25s ease;
+}
+
+.ui-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 18px 40px rgba(15,23,42,.12);
+}
+
+.ui-card-header{
+    margin-bottom:20px;
+}
+
+.ui-card-header h2{
+    margin:0;
+    font-size:22px;
+    color:#111827;
+    font-weight:700;
+}
+
+.ui-card-header p{
+    margin-top:6px;
+    color:#6B7280;
+    font-size:14px;
+}
+
+.ui-card-body{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}

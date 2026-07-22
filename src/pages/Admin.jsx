@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "./home.css";
 
-import Header from "../components/Header";
 import DashboardGrid from "../components/DashboardGrid";
 import ActionCenter from "../components/ActionCenter";
 import AIInsights from "../components/AIInsights";
@@ -17,7 +16,6 @@ import {
 } from "../services/intelligenceService";
 
 function Admin({ onCustomers, onBirthday }) {
-
   const [stats, setStats] = useState({
     totalCustomers: 0,
     birthdaysToday: 0,
@@ -37,7 +35,6 @@ function Admin({ onCustomers, onBirthday }) {
   }, []);
 
   async function loadDashboard() {
-
     const customers = await getCustomers();
 
     const today = new Date();
@@ -45,7 +42,6 @@ function Admin({ onCustomers, onBirthday }) {
     let birthdaysToday = 0;
 
     customers.forEach((customer) => {
-
       if (!customer.birthday) return;
 
       const birthday = new Date(customer.birthday);
@@ -56,7 +52,6 @@ function Admin({ onCustomers, onBirthday }) {
       ) {
         birthdaysToday++;
       }
-
     });
 
     setStats({
@@ -73,30 +68,22 @@ function Admin({ onCustomers, onBirthday }) {
     setInsights(
       generateDailyInsights(customers)
     );
-
   }
 
   return (
-
     <div className="container fade">
 
       <div className="dashboard">
+
         <MorningBriefing
-
-    stats={stats}
-
-    insights={insights}
-
-/>
-
-<Header
-    businessHealth={businessHealth}
-/>
-
-    
+          stats={stats}
+          insights={insights}
+          businessHealth={businessHealth}
+        />
 
         <DashboardGrid
           stats={stats}
+          businessHealth={businessHealth}
         />
 
         <ActionCenter
@@ -119,9 +106,7 @@ function Admin({ onCustomers, onBirthday }) {
       </div>
 
     </div>
-
   );
-
 }
 
 export default Admin;

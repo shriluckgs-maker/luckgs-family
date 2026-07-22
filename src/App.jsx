@@ -53,10 +53,11 @@ function App() {
 
       {page === "customers" && (
         <Customers
-          onBack={() => setPage("admin")}
-          onView={(id) => {
-            setSelectedCustomer(id);
-            setPage("profile");
+           onBack={() => setPage("admin")}
+  onRegister={() => setPage("register")}
+  onView={(id) => {
+    setSelectedCustomer(id);
+    setPage("profile");
           }}
         />
       )}

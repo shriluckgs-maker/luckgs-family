@@ -1,0 +1,30 @@
+.empty-state{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:60px 20px;
+}
+
+.empty-icon{
+    font-size:70px;
+    margin-bottom:20px;
+}
+
+.empty-state h2{
+    margin:0;
+    font-size:28px;
+    color:#111827;
+}
+
+.empty-state p{
+    margin-top:12px;
+    max-width:420px;
+    color:#6B7280;
+    line-height:1.6;
+}
+
+.empty-action{
+    margin-top:30px;
+}

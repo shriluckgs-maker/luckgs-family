@@ -1,0 +1,283 @@
+/* ===================================================
+   LUCK-G'S AI RC 1.1
+   CUSTOMER DIRECTORY
+=================================================== */
+
+.customers-page{
+    min-height:100vh;
+    background:#F8FAFC;
+    padding:40px;
+}
+
+.customers-container{
+    max-width:1400px;
+    margin:auto;
+}
+
+.customers-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:35px;
+}
+
+.customers-header h1{
+    font-size:38px;
+    color:#111827;
+    margin-bottom:8px;
+}
+
+.customers-header p{
+    color:#6B7280;
+    font-size:16px;
+}
+
+.back-btn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    border:none;
+    background:#6B1525;
+    color:white;
+    padding:12px 22px;
+    border-radius:14px;
+    cursor:pointer;
+    font-weight:600;
+    transition:.3s;
+}
+
+.back-btn:hover{
+    background:#8B2332;
+    transform:translateY(-2px);
+}
+
+/* =========================================
+   SUMMARY CARDS
+========================================= */
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+    margin-bottom:30px;
+}
+
+.summary-card{
+    background:white;
+    border-radius:22px;
+    padding:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    transition:.3s;
+}
+
+.summary-card:hover{
+    transform:translateY(-5px);
+}
+
+.summary-card svg{
+    color:#6B1525;
+}
+
+.summary-card h2{
+    font-size:42px;
+    margin:0;
+    color:#111827;
+}
+
+.summary-card span{
+    color:#6B7280;
+}
+
+/* =========================================
+   SEARCH
+========================================= */
+
+.search-wrapper{
+    position:relative;
+    margin-bottom:30px;
+}
+
+.search-icon{
+    position:absolute;
+    left:18px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#9CA3AF;
+}
+
+.search-input{
+    width:100%;
+    padding:16px 18px 16px 50px;
+    border:none;
+    border-radius:18px;
+    background:white;
+    font-size:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    outline:none;
+}
+
+.search-input:focus{
+    box-shadow:0 0 0 4px rgba(107,21,37,.10);
+}
+
+/* =========================================
+   TABLE
+========================================= */
+
+.customer-table-wrapper{
+    overflow:auto;
+    border-radius:22px;
+    background:white;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.customer-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.customer-table thead{
+    background:#6B1525;
+    color:white;
+    position:sticky;
+    top:0;
+}
+
+.customer-table th{
+    padding:18px;
+    text-align:left;
+    font-size:15px;
+}
+
+.customer-table td{
+    padding:18px;
+    border-bottom:1px solid #EEF2F7;
+}
+
+.customer-table tbody tr{
+    transition:.2s;
+}
+
+.customer-table tbody tr:hover{
+    background:#F9FAFB;
+}
+
+.customer-table tbody tr:nth-child(even){
+    background:#FCFCFD;
+}
+
+/* =========================================
+   CELLS
+========================================= */
+
+.customer-name{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    font-weight:600;
+}
+
+.customer-avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#6B1525;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.mobile-cell,
+.date-cell{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:#6B7280;
+}
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.table-actions{
+    display:flex;
+    gap:10px;
+}
+
+.table-btn{
+    border:none;
+    padding:10px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    transition:.3s;
+    background:#E5E7EB;
+}
+
+.table-btn:hover{
+    transform:translateY(-2px);
+}
+
+.whatsapp-btn{
+    background:#25D366;
+    color:white;
+}
+
+.whatsapp-btn:hover{
+    background:#20BD5A;
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.empty-cell{
+    text-align:center;
+    padding:40px;
+    color:#6B7280;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:992px){
+
+.summary-grid{
+grid-template-columns:1fr;
+}
+
+.customers-header{
+flex-direction:column;
+align-items:flex-start;
+gap:20px;
+}
+
+}
+
+@media(max-width:768px){
+
+.customers-page{
+padding:20px;
+}
+
+.customer-table th,
+.customer-table td{
+padding:12px;
+font-size:14px;
+}
+
+.table-actions{
+flex-direction:column;
+}
+
+.table-btn{
+width:100%;
+}
+
+}
