@@ -1,0 +1,199 @@
+/* ===========================================
+   CUSTOMER PROFILE
+=========================================== */
+
+.profile-page{
+    min-height:100vh;
+    background:#F8FAFC;
+    padding:40px;
+}
+
+.profile-container{
+    max-width:1400px;
+    margin:auto;
+}
+
+/* ===========================================
+   GRID
+=========================================== */
+
+.profile-grid{
+    display:grid;
+    grid-template-columns:380px 1fr;
+    gap:30px;
+    align-items:start;
+}
+
+/* ===========================================
+   LEFT CARD
+=========================================== */
+
+.profile-card{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+}
+
+.profile-avatar{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:#6B1525;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:20px;
+    box-shadow:0 15px 35px rgba(107,21,37,.25);
+}
+
+.profile-card h2{
+    margin:0;
+    font-size:30px;
+    color:#111827;
+}
+
+.member-since{
+    margin-top:8px;
+    color:#6B7280;
+    font-size:14px;
+}
+
+.profile-card span{
+    color:#374151;
+    font-weight:600;
+}
+
+/* ===========================================
+   DETAILS
+=========================================== */
+
+.profile-details{
+    width:100%;
+    margin-top:30px;
+}
+
+.profile-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:16px;
+    margin-bottom:14px;
+    border-radius:14px;
+    background:#F9FAFB;
+    transition:.25s;
+}
+
+.profile-row:hover{
+    background:#EEF2F7;
+}
+
+.profile-row svg{
+    color:#6B1525;
+}
+
+.profile-row span{
+    color:#374151;
+    font-size:15px;
+}
+
+/* ===========================================
+   RIGHT SIDE
+=========================================== */
+
+.profile-right{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+/* ===========================================
+   ACTION BUTTONS
+=========================================== */
+
+.action-buttons{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+}
+
+/* ===========================================
+   AI CARD
+=========================================== */
+
+.ai-text{
+    font-size:15px;
+    line-height:1.8;
+    color:#374151;
+}
+
+/* ===========================================
+   TIMELINE
+=========================================== */
+
+.timeline{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+.timeline-item{
+    display:flex;
+    gap:16px;
+    align-items:flex-start;
+}
+
+.timeline-dot{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:#6B1525;
+    margin-top:6px;
+    flex-shrink:0;
+}
+
+.timeline-item h4{
+    margin:0;
+    color:#111827;
+    font-size:17px;
+}
+
+.timeline-item p{
+    margin-top:6px;
+    color:#6B7280;
+    line-height:1.6;
+}
+
+/* ===========================================
+   RESPONSIVE
+=========================================== */
+
+@media(max-width:992px){
+
+.profile-grid{
+    grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:768px){
+
+.profile-page{
+    padding:20px;
+}
+
+.action-buttons{
+    grid-template-columns:1fr;
+}
+
+.profile-card h2{
+    font-size:24px;
+}
+
+.profile-avatar{
+    width:100px;
+    height:100px;
+}
+
+}

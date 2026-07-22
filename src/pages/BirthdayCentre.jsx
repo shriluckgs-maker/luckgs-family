@@ -1,31 +1,38 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
+
+import PageHeader from "../components/ui/PageHeader";
+import Loader from "../components/ui/Loader";
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
+
 import { db } from "../firebase/firebaseConfig";
-import "./home.css";
+
+import "./birthdayCentre.css";
 
 function BirthdayCentre({ onBack }) {
-
-  const [birthdays, setBirthdays] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [todayBirthdays, setTodayBirthdays] = useState([]);
+  const [upcomingBirthdays, setUpcomingBirthdays] = useState([]);
 
   useEffect(() => {
-
-    loadBirthdays();
-
+    loadCustomers();
   }, []);
 
-  async function loadBirthdays() {
+  async function loadCustomers() {
+    try {
+      const snapshot = await getDocs(collection(db, "customers"));
 
-    const snapshot = await getDocs(collection(db, "customers"));
-
-    const today = new Date();
-
-    const data = snapshot.docs
-      .map(doc => ({
+      const data = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
-      }))
-      .filter(customer => {
+        ...doc.data(),
+      }));
 
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Today's Birthdays
+      const todays = data.filter((customer) => {
         if (!customer.birthday) return false;
 
         const birthday = new Date(customer.birthday);
@@ -34,69 +41,123 @@ function BirthdayCentre({ onBack }) {
           birthday.getDate() === today.getDate() &&
           birthday.getMonth() === today.getMonth()
         );
-
       });
 
-    setBirthdays(data);
+      setTodayBirthdays(todays);
 
+      // Upcoming Birthdays
+      const upcoming = data
+        .map((customer) => {
+          if (!customer.birthday) return null;
+
+          const birthday = new Date(customer.birthday);
+          const nextBirthday = new Date(birthday);
+
+          nextBirthday.setFullYear(today.getFullYear());
+          nextBirthday.setHours(0, 0, 0, 0);
+
+          if (nextBirthday < today) {
+            nextBirthday.setFullYear(today.getFullYear() + 1);
+          }
+
+          const diffDays = Math.floor(
+            (nextBirthday - today) / (1000 * 60 * 60 * 24)
+          );
+
+          return {
+            ...customer,
+            daysLeft: diffDays,
+          };
+        })
+        .filter(
+          (customer) =>
+            customer &&
+            customer.daysLeft >= 1 &&
+            customer.daysLeft <= 7
+        )
+        .sort((a, b) => a.daysLeft - b.daysLeft);
+
+      setUpcomingBirthdays(upcoming);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function sendWhatsApp(customer) {
+    const message =
+      `Happy Birthday ${customer.name}! 🎉🎂\n\n` +
+      `Wishing you a wonderful year ahead.\n\n` +
+      `- Team LUCK-G'S`;
+
+    const url = `https://wa.me/91${customer.mobile}?text=${encodeURIComponent(
+      message
+    )}`;
+
+    window.open(url, "_blank");
+  }
+
+  if (loading) {
+    return <Loader text="Loading birthdays..." />;
   }
 
   return (
+    <div className="birthday-page">
+      <div className="birthday-container">
+        <PageHeader
+          title="Birthday Centre"
+          subtitle="Wish customers and build stronger relationships."
+          onBack={onBack}
+        />
 
-    <div className="home">
+        <Card>
+          <h2>🎂 Today's Birthdays</h2>
 
-      <div className="card">
+          <p>Total Birthdays Today: {todayBirthdays.length}</p>
 
-        <button
-          className="dashboard-btn"
-          onClick={onBack}
-        >
-          ← Dashboard
-        </button>
+          {todayBirthdays.length === 0 ? (
+            <p>No birthdays today.</p>
+          ) : (
+            todayBirthdays.map((customer) => (
+              <div key={customer.id} className="birthday-card">
+                <h3>{customer.name}</h3>
 
-        <h1>🎂 Birthday Centre</h1>
+                <p>📱 {customer.mobile}</p>
 
-        {birthdays.length === 0 ? (
+                <Button onClick={() => sendWhatsApp(customer)}>
+                  💬 Wish on WhatsApp
+                </Button>
+              </div>
+            ))
+          )}
+        </Card>
 
-          <p>No birthdays today.</p>
+        <Card>
+          <h2>📅 Upcoming Birthdays (Next 7 Days)</h2>
 
-        ) : (
+          <p>Total Upcoming: {upcomingBirthdays.length}</p>
 
-          birthdays.map(customer => (
+          {upcomingBirthdays.length === 0 ? (
+            <p>No upcoming birthdays.</p>
+          ) : (
+            upcomingBirthdays.map((customer) => (
+              <div key={customer.id} className="birthday-card">
+                <h3>{customer.name}</h3>
 
-            <div
-              className="benefit-card"
-              key={customer.id}
-            >
+                <p>📱 {customer.mobile}</p>
 
-              <h3>{customer.name}</h3>
-
-              <p>{customer.mobile}</p>
-
-              <button
-                className="dashboard-btn"
-                onClick={() =>
-                  window.open(
-                    `https://wa.me/91${customer.mobile}`,
-                    "_blank"
-                  )
-                }
-              >
-                💬 Send WhatsApp Wish
-              </button>
-
-            </div>
-
-          ))
-
-        )}
-
+                <p>
+                  🎂 Birthday in <strong>{customer.daysLeft}</strong>{" "}
+                  {customer.daysLeft === 1 ? "day" : "days"}
+                </p>
+              </div>
+            ))
+          )}
+        </Card>
       </div>
-
     </div>
-
   );
-
 }
 
 export default BirthdayCentre;

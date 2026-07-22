@@ -1,30 +1,62 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
-import { db } from "../firebase/firebaseConfig";
-import "./customerProfile.css";
-import CustomerTimeline from "../components/customer/CustomerTimeline";
-import Loader from "../components/ui/Loader";
 
-function CustomerProfile({ customerId, onBack, onEdit }) {
+import {
+  User,
+  Phone,
+  Cake,
+  CalendarDays,
+  MessageCircle,
+  Pencil,
+  Trash2,
+} from "lucide-react";
+
+import { db } from "../firebase/firebaseConfig";
+
+import Loader from "../components/ui/Loader";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
+import PageHeader from "../components/ui/PageHeader";
+
+import "./customerProfile.css";
+
+function CustomerProfile({
+  customerId,
+  onBack,
+  onEdit,
+}) {
 
   const [customer, setCustomer] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadCustomer();
-  }, []);
+  }, [customerId]);
 
   async function loadCustomer() {
 
-    const snap = await getDoc(
-      doc(db, "customers", customerId)
-    );
+    try {
 
-    if (snap.exists()) {
+      const snap = await getDoc(
+        doc(db, "customers", customerId)
+      );
 
-      setCustomer({
-        id: snap.id,
-        ...snap.data()
-      });
+      if (snap.exists()) {
+
+        setCustomer({
+          id: snap.id,
+          ...snap.data(),
+        });
+
+      }
+
+    } catch (err) {
+
+      console.error(err);
+
+    } finally {
+
+      setLoading(false);
 
     }
 
@@ -32,113 +64,212 @@ function CustomerProfile({ customerId, onBack, onEdit }) {
 
   async function deleteCustomer() {
 
-    if (!window.confirm("Delete customer?"))
+    if (!window.confirm("Delete this customer?"))
       return;
 
     await deleteDoc(
-      doc(db, "customers", customerId)
+      doc(db, "customers", customer.id)
     );
 
     onBack();
 
   }
 
+  if (loading) {
+    return <Loader text="Loading customer..." />;
+  }
+
   if (!customer) {
-
-    return (
-      <Loader
-      text="Loading customer profile..."
-      size="large"
-       />
-    );
-
+    return <Loader text="Customer not found..." />;
   }
 
   return (
 
-    <div className="home">
+<div className="profile-page">
 
-      <div className="card">
+  <div className="profile-container">
 
-        <h1>👤 Customer Profile</h1>
+    <PageHeader
+      title="Customer Profile"
+      subtitle="Manage customer relationship"
+      onBack={onBack}
+    />
 
-        <div className="benefit-card">
-          <strong>Name</strong>
-          <br />
-          {customer.name}
+    <div className="profile-grid">
+
+      <Card>
+
+        <div className="profile-card">
+
+          <div className="profile-avatar">
+            <User size={60} />
+          </div>
+
+          <h2>{customer.name}</h2>
+
+          <p className="member-since">
+            Member Since
+          </p>
+
+          <span>
+            {customer.createdAt || "Not Available"}
+          </span>
+
+          <div className="profile-details">
+
+            <div className="profile-row">
+              <Phone size={18} />
+              <span>{customer.mobile}</span>
+            </div>
+
+            <div className="profile-row">
+              <Cake size={18} />
+              <span>{customer.birthday || "-"}</span>
+            </div>
+
+            <div className="profile-row">
+              <CalendarDays size={18} />
+              <span>{customer.anniversary || "-"}</span>
+            </div>
+
+          </div>
+
         </div>
 
-        <div className="benefit-card">
-          <strong>Mobile</strong>
-          <br />
-          {customer.mobile}
-        </div>
+      </Card>
 
-        <div className="benefit-card">
-          <strong>Birthday</strong>
-          <br />
-          {customer.birthday}
-        </div>
+      <div className="profile-right">
 
-        <div className="benefit-card">
-          <strong>Anniversary</strong>
-          <br />
-          {customer.anniversary || "-"}
-          <CustomerTimeline
-    customer={customer}
-/>
-        </div>
+  <Card>
 
-        <button
-          className="dashboard-btn"
-          onClick={() =>
-            window.open(
-              `https://wa.me/91${customer.mobile}`,
-              "_blank"
-            )
-          }
-        >
-          💬 WhatsApp
-        </button>
+    <h3>Quick Actions</h3>
 
-        <button
-          className="dashboard-btn"
-          onClick={() =>
-            window.location.href =
-              `tel:${customer.mobile}`
-          }
-        >
-          📞 Call
-        </button>
+    <div className="action-buttons">
 
-        <button
-          className="dashboard-btn"
-          onClick={() =>
-            onEdit(customer.id)
-          }
-        >
-          ✏ Edit
-        </button>
+      <Button
+        variant="primary"
+        onClick={() =>
+          window.open(
+            `https://wa.me/91${customer.mobile}`,
+            "_blank"
+          )
+        }
+      >
+        <MessageCircle size={18} />
+        WhatsApp
+      </Button>
 
-        <button
-          className="dashboard-btn"
-          onClick={deleteCustomer}
-        >
-          🗑 Delete
-        </button>
+      <Button
+        variant="secondary"
+        onClick={() =>
+          window.open(
+            `tel:${customer.mobile}`
+          )
+        }
+      >
+        <Phone size={18} />
+        Call
+      </Button>
 
-        <button
-          className="dashboard-btn"
-          onClick={onBack}
-        >
-          ← Back
-        </button>
+      <Button
+        variant="primary"
+        onClick={() => onEdit(customer.id)}
+      >
+        <Pencil size={18} />
+        Edit
+      </Button>
+
+      <Button
+        variant="danger"
+        onClick={deleteCustomer}
+      >
+        <Trash2 size={18} />
+        Delete
+      </Button>
+
+    </div>
+
+  </Card>
+
+  <Card>
+
+    <h3>AI Recommendation</h3>
+
+    <p className="ai-text">
+
+      🎯 We recommend sending this customer
+      your latest wedding collection catalogue.
+
+    </p>
+
+  </Card>
+  <Card>
+
+  <h3>Activity Timeline</h3>
+
+  <div className="timeline">
+
+    <div className="timeline-item">
+
+      <div className="timeline-dot"></div>
+
+      <div>
+
+        <h4>Customer Registered</h4>
+
+        <p>
+          Customer profile created successfully.
+        </p>
 
       </div>
 
     </div>
 
-  );
+    <div className="timeline-item">
+
+      <div className="timeline-dot"></div>
+
+      <div>
+
+        <h4>Birthday Reminder</h4>
+
+        <p>
+          Birthday wishes will automatically appear here.
+        </p>
+
+      </div>
+
+    </div>
+
+    <div className="timeline-item">
+
+      <div className="timeline-dot"></div>
+
+      <div>
+
+        <h4>Future Activity</h4>
+
+        <p>
+          WhatsApp campaigns, follow-ups, purchases and AI recommendations will appear here.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</Card>
+
+</div>
+
+    </div>
+
+  </div>
+
+</div>
+
+);
 
 }
 
