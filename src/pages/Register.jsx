@@ -79,13 +79,13 @@ return;
 
     try {
 
-      await addDoc(collection(db, "customers"), {
-        name: form.name.trim(),
-        mobile: form.mobile,
-        birthday: form.birthday,
-        anniversary: form.anniversary,
-        joinedOn: new Date().toISOString(),
-      });
+      const docRef = await addDoc(collection(db, "customers"), {
+  name: form.name.trim(),
+  mobile: form.mobile,
+  birthday: form.birthday,
+  anniversary: form.anniversary,
+  joinedOn: new Date().toISOString(),
+});
 
       showToast({
   type: "success",
@@ -102,8 +102,14 @@ return;
       setTimeout(() => {
 
       if (onSuccess) {
-        onSuccess();
-      }
+  onSuccess({
+    id: docRef.id,
+    name: form.name.trim(),
+    mobile: form.mobile,
+    birthday: form.birthday,
+    anniversary: form.anniversary,
+  });
+}
       }, 1500);
 
     } catch (error) {

@@ -3,6 +3,7 @@ import {
   Users,
   Cake,
   BarChart3,
+  Gift,
   ArrowRight,
 } from "lucide-react";
 
@@ -10,9 +11,9 @@ function QuickActions({
   onAddCustomer,
   onCustomers,
   onBirthday,
+  onRewardPasses,
   onReports,
 }) {
-
   const actions = [
     {
       title: "Add Customer",
@@ -36,17 +37,23 @@ function QuickActions({
       action: onBirthday,
     },
     {
+      title: "Reward Passes",
+      subtitle: "Redeem & manage rewards",
+      icon: <Gift size={28} />,
+      color: "#F59E0B",
+      action: onRewardPasses,
+    },
+    {
       title: "Reports",
       subtitle: "Business analytics",
       icon: <BarChart3 size={28} />,
-      color: "#D4AF37",
+      color: "#8B5CF6",
       action: onReports,
     },
   ];
 
   return (
     <section className="quick-actions">
-
       <div className="section-header">
         <div>
           <h2>Quick Actions</h2>
@@ -55,15 +62,12 @@ function QuickActions({
       </div>
 
       <div className="quick-grid">
-
         {actions.map((item, index) => (
-
           <button
             key={index}
             className="quick-card"
             onClick={item.action}
           >
-
             <div
               className="quick-icon"
               style={{
@@ -75,21 +79,14 @@ function QuickActions({
             </div>
 
             <div className="quick-content">
-
               <h3>{item.title}</h3>
-
               <p>{item.subtitle}</p>
-
             </div>
 
             <ArrowRight size={18} />
-
           </button>
-
         ))}
-
       </div>
-
     </section>
   );
 }

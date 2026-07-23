@@ -15,7 +15,11 @@ import {
   generateDailyInsights,
 } from "../services/intelligenceService";
 
-function Admin({ onCustomers, onBirthday }) {
+function Admin({
+  onCustomers,
+  onBirthday,
+  onRewardPasses,
+}) {
   const [stats, setStats] = useState({
     totalCustomers: 0,
     birthdaysToday: 0,
@@ -35,39 +39,44 @@ function Admin({ onCustomers, onBirthday }) {
   }, []);
 
   async function loadDashboard() {
-    const customers = await getCustomers();
+    try {
+      const customers = await getCustomers();
 
-    const today = new Date();
+      const today = new Date();
 
-    let birthdaysToday = 0;
+      let birthdaysToday = 0;
 
-    customers.forEach((customer) => {
-      if (!customer.birthday) return;
+      customers.forEach((customer) => {
+        if (!customer.birthday) return;
 
-      const birthday = new Date(customer.birthday);
+        const birthday = new Date(customer.birthday);
 
-      if (
-        birthday.getDate() === today.getDate() &&
-        birthday.getMonth() === today.getMonth()
-      ) {
-        birthdaysToday++;
-      }
-    });
+        if (
+          birthday.getDate() === today.getDate() &&
+          birthday.getMonth() === today.getMonth()
+        ) {
+          birthdaysToday++;
+        }
+      });
 
-    setStats({
-      totalCustomers: customers.length,
-      birthdaysToday,
-      upcomingBirthdays: 0,
-      newMembers: customers.length,
-    });
+      setStats({
+        totalCustomers: customers.length,
+        birthdaysToday,
+        upcomingBirthdays: 0,
+        newMembers: customers.length,
+      });
 
-    setBusinessHealth(
-      calculateBusinessHealth(customers)
-    );
+      setBusinessHealth(
+        calculateBusinessHealth(customers)
+      );
 
-    setInsights(
-      generateDailyInsights(customers)
-    );
+      setInsights(
+        generateDailyInsights(customers)
+      );
+
+    } catch (error) {
+      console.error("Dashboard Error:", error);
+    }
   }
 
   return (
@@ -100,6 +109,7 @@ function Admin({ onCustomers, onBirthday }) {
           onAddCustomer={() => {}}
           onCustomers={onCustomers}
           onBirthday={onBirthday}
+          onRewardPasses={onRewardPasses}
           onReports={() => {}}
         />
 
