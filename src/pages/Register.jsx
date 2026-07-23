@@ -9,7 +9,6 @@ import {
   Cake,
   Heart,
   ShieldCheck,
-  ArrowLeft,
 } from "lucide-react";
 
 import { collection, addDoc } from "firebase/firestore";
@@ -133,16 +132,7 @@ return;
 
         <div className="register-header">
 
-          <button
-            className="back-btn"
-            onClick={onBack}
-          >
-
-            <ArrowLeft size={18} />
-
-            Dashboard
-
-          </button>
+          
 
         <PageHeader
     title="Customer Registration"

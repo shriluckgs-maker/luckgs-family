@@ -28,6 +28,8 @@ function App() {
       {page === "register" && (
         <Register
           onSuccess={() => setPage("success")}
+            onBack={() => setPage("home")
+          }
         />
       )}
 
