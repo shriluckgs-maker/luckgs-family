@@ -1,0 +1,166 @@
+/* ==========================
+   LUCK-G'S FAMILY CLUB
+   Premium Landing Page
+========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f8f5ef;
+}
+
+.landing-page{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    background:linear-gradient(180deg,#fffdf9,#f5efe6);
+}
+
+.landing-card{
+    width:100%;
+    max-width:450px;
+    background:#ffffff;
+    border-radius:28px;
+    padding:35px 28px;
+    text-align:center;
+    box-shadow:0 15px 40px rgba(0,0,0,.12);
+    border:2px solid #d4af37;
+}
+
+.landing-logo{
+    width:130px;
+    height:130px;
+    object-fit:contain;
+    margin-bottom:15px;
+}
+
+.landing-title{
+    color:#6B1525;
+    font-size:36px;
+    font-weight:700;
+    letter-spacing:1px;
+}
+
+.landing-subtitle{
+    color:#b88a00;
+    margin-top:5px;
+    font-size:22px;
+    letter-spacing:2px;
+}
+
+.landing-message{
+    margin-top:18px;
+    color:#555;
+    font-size:17px;
+    line-height:1.7;
+}
+
+.benefits{
+    margin-top:30px;
+    display:grid;
+    gap:15px;
+}
+
+.benefit{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:16px;
+    border-radius:16px;
+    background:#faf7f2;
+    border:1px solid #eee;
+    transition:.3s;
+}
+
+.benefit:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.benefit span{
+    font-size:30px;
+}
+
+.benefit p{
+    font-size:17px;
+    color:#333;
+    font-weight:600;
+}
+
+.join-button{
+    width:100%;
+    margin-top:30px;
+    padding:18px;
+    border:none;
+    border-radius:16px;
+    background:#6B1525;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.join-button:hover{
+    background:#52101c;
+}
+
+.landing-footer{
+    margin-top:18px;
+    color:#777;
+    font-size:15px;
+}
+
+.owner-login{
+    margin-top:25px;
+    background:none;
+    border:none;
+    color:#6B1525;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+}
+
+.owner-login:hover{
+    text-decoration:underline;
+}
+
+@media(max-width:600px){
+
+    .landing-card{
+        padding:25px 20px;
+    }
+
+    .landing-logo{
+        width:110px;
+        height:110px;
+    }
+
+    .landing-title{
+        font-size:30px;
+    }
+
+    .landing-subtitle{
+        font-size:18px;
+    }
+
+    .benefit{
+        padding:14px;
+    }
+
+    .benefit p{
+        font-size:15px;
+    }
+
+    .join-button{
+        font-size:17px;
+    }
+
+}
