@@ -9,6 +9,7 @@ import {
   UserPlus,
 
   ShieldCheck,
+  MessageCircle,
 
 } from "lucide-react";
 
@@ -54,6 +55,14 @@ function DashboardGrid({
         subtitle={businessHealth.message}
         icon={<ShieldCheck size={30} />}
         color="#D4AF37"
+      />
+
+      <DashboardCard
+        title="WhatsApp Welcome"
+        value={stats.whatsAppSent}
+        subtitle={`${stats.whatsAppQueued} queued · ${stats.whatsAppFailed} need attention`}
+        icon={<MessageCircle size={30} />}
+        color="#22C55E"
       />
 
     </div>

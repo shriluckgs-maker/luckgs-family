@@ -25,7 +25,7 @@ function ActionCenter({ stats }) {
     {
       icon: <MessageCircle size={24} />,
       title: "WhatsApp Campaign",
-      description: "Send festival offers and promotional messages.",
+      description: `${stats.whatsAppSent} reward message(s) sent, ${stats.whatsAppQueued} queued. Future offers go only to opted-in customers.`,
       button: "Start",
       color: "#22C55E",
     },

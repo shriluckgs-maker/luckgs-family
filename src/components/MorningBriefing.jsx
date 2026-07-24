@@ -70,6 +70,11 @@ function MorningBriefing({ stats, insights }) {
 
         </div>
 
+        <div className="summary-box">
+          <h2>{stats.whatsAppSent}/{stats.whatsAppQueued}</h2>
+          <span>WhatsApp Sent / Queued</span>
+        </div>
+
       </div>
 
       {insights.length > 0 && (

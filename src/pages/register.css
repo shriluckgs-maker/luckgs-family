@@ -7,6 +7,7 @@
     min-height:100vh;
     background:#F8FAFC;
     padding:40px;
+    color-scheme:light;
 }
 
 .register-container{
@@ -125,6 +126,15 @@
     transition:.3s;
     outline:none;
     background:white;
+    color:#111827;
+    -webkit-text-fill-color:#111827;
+    opacity:1;
+}
+
+.form-group input::placeholder{
+    color:#6B7280;
+    -webkit-text-fill-color:#6B7280;
+    opacity:1;
 }
 
 .form-group input:focus{
@@ -237,4 +247,36 @@
     width:100%;
 }
 
+}
+
+.registration-error{
+    padding:14px 16px;
+    border:1px solid #FCA5A5;
+    border-radius:12px;
+    background:#FEF2F2;
+    color:#B91C1C;
+    font-size:14px;
+    font-weight:600;
+}
+
+.dob-selects{
+    display:grid;
+    grid-template-columns:1fr 1.5fr 1fr;
+    gap:8px;
+}
+
+.dob-selects select{
+    min-width:0;
+    padding:15px 10px;
+    border:2px solid #E5E7EB;
+    border-radius:14px;
+    background:#fff;
+    color:#374151;
+    font-size:14px;
+    outline:none;
+}
+
+.dob-selects select:focus{
+    border-color:#6B1525;
+    box-shadow:0 0 0 4px rgba(107,21,37,.10);
 }

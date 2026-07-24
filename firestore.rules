@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // A customer can only be created together with a unique mobile reservation.
+    // `getAfter` checks the final state of the same Firestore transaction.
+    match /customers/{customerId} {
+      allow read: if true;
+      allow create: if request.resource.data.mobile is string
+        && request.resource.data.mobile.matches('^[6-9][0-9]{9}$')
+        && existsAfter(/databases/$(database)/documents/customerMobiles/$(request.resource.data.mobile))
+        && getAfter(/databases/$(database)/documents/customerMobiles/$(request.resource.data.mobile)).data.customerId == customerId;
+      allow update: if request.resource.data.mobile == resource.data.mobile;
+      allow delete: if true;
+    }
+
+    match /customerMobiles/{mobile} {
+      allow read: if true;
+      allow create: if !exists(/databases/$(database)/documents/customerMobiles/$(mobile))
+        && request.resource.data.mobile == mobile
+        && request.resource.data.customerId is string;
+      allow delete: if true;
+    }
+
+    // Current club tools are unauthenticated, so retain their existing access.
+    match /places/{placeId} { allow read, write: if true; }
+    match /luckySpins/{spinId} { allow read, write: if true; }
+    match /rewardPasses/{passId} { allow read, write: if true; }
+    match /spinRewards/{rewardId} { allow read, write: if true; }
+  }
+}

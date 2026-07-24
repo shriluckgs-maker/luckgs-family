@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
-import { doc, getDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, writeBatch } from "firebase/firestore";
 
 import {
   User,
   Phone,
   Cake,
   CalendarDays,
+  MapPin,
   MessageCircle,
   Pencil,
   Trash2,
 } from "lucide-react";
 
 import { db } from "../firebase/firebaseConfig";
+import { normalizeIndianMobile } from "../utils/mobileNumber";
 
 import Loader from "../components/ui/Loader";
 import Button from "../components/ui/Button";
@@ -67,9 +69,11 @@ function CustomerProfile({
     if (!window.confirm("Delete this customer?"))
       return;
 
-    await deleteDoc(
-      doc(db, "customers", customer.id)
-    );
+    const batch = writeBatch(db);
+    batch.delete(doc(db, "customers", customer.id));
+    const mobile = normalizeIndianMobile(customer.mobile || customer.phone);
+    if (mobile) batch.delete(doc(db, "customerMobiles", mobile));
+    await batch.commit();
 
     onBack();
 
@@ -119,7 +123,12 @@ function CustomerProfile({
 
             <div className="profile-row">
               <Phone size={18} />
-              <span>{customer.mobile}</span>
+              <span>{normalizeIndianMobile(customer.mobile || customer.phone) || "Not provided"}</span>
+            </div>
+
+            <div className="profile-row">
+              <MapPin size={18} />
+              <span>{customer.place || customer.town || "Not provided"}</span>
             </div>
 
             <div className="profile-row">

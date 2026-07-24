@@ -60,7 +60,7 @@ function RewardPasses({ onBack }) {
     ).length;
 
     const redeemed = passes.filter(
-      (p) => p.status === "REDEEMED"
+      (p) => p.status?.toUpperCase() === "REDEEMED"
     ).length;
 
     const expiring = passes.filter((p) => {
@@ -100,7 +100,7 @@ Status : ${pass.status}`
   }
 
   async function handleRedeem(pass) {
-    if (pass.status !== "ACTIVE") {
+    if (pass.status?.toUpperCase() !== "ACTIVE") {
       alert("Reward Pass already redeemed.");
       return;
     }

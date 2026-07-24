@@ -6,17 +6,12 @@ import {
   getFinalPlace,
 } from "../services/placeService";
 
-import {
-  collection,
-  addDoc,
-  getDocs,
-  setDoc,
-  doc,
-} from "firebase/firestore";
-
-import { db } from "../firebase/firebaseConfig";
+import { registerCustomer } from "../services/registrationService";
+import { isValidIndianMobile, normalizeIndianMobile } from "../utils/mobileNumber";
 import { useToast } from "../contexts/ToastContext";
 import PageHeader from "../components/ui/PageHeader";
+import LanguageToggle from "../components/LanguageToggle";
+import { translate } from "../utils/i18n";
 
 import {
   User,
@@ -27,10 +22,12 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-function Register({ onSuccess, onBack }) {
+function Register({ language, onLanguageChange, onSuccess, onBack }) {
+  const t = (key, english) => language === "kn" ? translate(language, key) : english;
   const { showToast } = useToast();
 
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
 
   const [places, setPlaces] = useState([]);
 
@@ -38,13 +35,17 @@ function Register({ onSuccess, onBack }) {
     name: "",
     mobile: "",
     birthday: "",
+    birthdayDay: "",
+    birthdayMonth: "",
+    birthdayYear: "",
     gender: "",
     place: "",
     customPlace: "",
+    marketingConsent: false,
   });
 
   useEffect(() => {
-    loadPlaces();
+    loadPlaces().then(setPlaces);
 
     const input = document.getElementById("customerName");
 
@@ -58,30 +59,43 @@ function Register({ onSuccess, onBack }) {
 
     setForm((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "mobile" ? normalizeIndianMobile(value) : value,
     }));
+    setFormError("");
+  }
+
+  function handleBirthdayChange(part, value) {
+    setForm((previous) => {
+      const next = { ...previous, [part]: value };
+      const { birthdayDay, birthdayMonth, birthdayYear } = next;
+      next.birthday = birthdayDay && birthdayMonth && birthdayYear
+        ? `${birthdayYear}-${String(birthdayMonth).padStart(2, "0")}-${String(birthdayDay).padStart(2, "0")}`
+        : "";
+      return next;
+    });
   }
     
 
-    async function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    setFormError("");
 
     // Name Validation
     if (!form.name.trim()) {
       showToast({
         type: "error",
-        title: "Missing Name",
-        message: "Please enter the customer's full name.",
+        title: t("missingName", "Missing Name"),
+        message: t("enterFullName", "Please enter the customer's full name."),
       });
       return;
     }
 
     // Mobile Validation
-    if (!/^[0-9]{10}$/.test(form.mobile)) {
+    if (!isValidIndianMobile(form.mobile)) {
       showToast({
         type: "error",
-        title: "Invalid Mobile",
-        message: "Please enter a valid 10-digit mobile number.",
+        title: t("invalidMobile", "Invalid Mobile"),
+        message: t("enterValidMobile", "Please enter a valid 10-digit mobile number."),
       });
       return;
     }
@@ -90,8 +104,8 @@ function Register({ onSuccess, onBack }) {
     if (!form.birthday) {
       showToast({
         type: "error",
-        title: "Birthday Required",
-        message: "Please select customer's birthday.",
+        title: t("birthdayRequired", "Birthday Required"),
+        message: t("selectBirthday", "Please select customer's birthday."),
       });
       return;
     }
@@ -100,8 +114,8 @@ function Register({ onSuccess, onBack }) {
     if (!form.gender) {
       showToast({
         type: "error",
-        title: "Gender Required",
-        message: "Please select gender.",
+        title: t("genderRequired", "Gender Required"),
+        message: t("selectGender", "Please select gender."),
       });
       return;
     }
@@ -114,8 +128,8 @@ function Register({ onSuccess, onBack }) {
     ) {
       showToast({
         type: "error",
-        title: "Place Required",
-        message: "Please select or enter customer's place.",
+        title: t("placeRequired", "Place Required"),
+        message: t("selectOrEnterPlace", "Please select or enter customer's place."),
       });
       return;
     }
@@ -130,32 +144,19 @@ if (form.place === "OTHER") {
   await savePlace(finalPlace);
 }
 
-      const customer = {
-        name: form.name.trim(),
-        mobile: form.mobile.trim(),
-        birthday: form.birthday,
-        gender: form.gender,
-        place: finalPlace,
-        joinedOn: new Date().toISOString(),
-      };
-
-      const docRef = await addDoc(
-        collection(db, "customers"),
-        customer
-      );
+      const customer = await registerCustomer({ ...form, place: finalPlace });
 
       // Refresh place dropdown
-      await loadPlaces();
+      setPlaces(await loadPlaces());
 
       showToast({
         type: "success",
-        title: "Registration Successful",
-        message: `${customer.name} has been registered.`,
+        title: t("registrationSuccessful", "Registration Successful"),
+        message: `${customer.name}: ${t("spinForReward", "Spin the wheel to reveal their reward.")}`,
       });
 
       if (onSuccess) {
         onSuccess({
-          id: docRef.id,
           ...customer,
         });
       }
@@ -165,19 +166,43 @@ if (form.place === "OTHER") {
         name: "",
         mobile: "",
         birthday: "",
+        birthdayDay: "",
+        birthdayMonth: "",
+        birthdayYear: "",
         gender: "",
         place: "",
         customPlace: "",
+        marketingConsent: false,
       });
 
     } catch (error) {
 
       console.error(error);
 
+      if (error.code === "already-registered" || error.code === "permission-denied") {
+        setFormError(t("alreadyRegistered", "You are already registered with LUCK-G'S Family Club using this mobile number."));
+        showToast({
+          type: "error",
+          title: t("alreadyRegistered", "Already Registered"),
+          message: t("alreadyRegistered", "This mobile number is already registered with LUCK-G'S Family Club."),
+        });
+        return;
+      }
+
+      if (error.code === "unavailable") {
+        setFormError(t("checkConnection", "We could not verify this mobile number. Please check the internet connection and try again."));
+        showToast({
+          type: "error",
+          title: t("connectionNeeded", "Connection Needed"),
+          message: t("checkConnection", "Please check the internet connection before registering a customer."),
+        });
+        return;
+      }
+
       showToast({
         type: "error",
-        title: "Registration Failed",
-        message: "Unable to save customer.",
+        title: t("registrationFailed", "Registration Failed"),
+        message: t("unableToSave", "Unable to save customer."),
       });
 
     } finally {
@@ -188,12 +213,13 @@ if (form.place === "OTHER") {
   }
 
   return (    <div className="register-page">
+      <LanguageToggle language={language} onChange={onLanguageChange} />
 
       <div className="register-container">
 
         <PageHeader
-          title="Customer Registration"
-          subtitle="Join the LUCK-G'S Family Club"
+          title={t("customerRegistration", "Customer Registration")}
+          subtitle={t("joinClub", "Join the LUCK-G'S Family Club")}
           onBack={onBack}
         />
 
@@ -204,9 +230,9 @@ if (form.place === "OTHER") {
             <ShieldCheck size={28} />
 
             <div>
-              <h2>Customer Details</h2>
+              <h2>{t("customerDetails", "Customer Details")}</h2>
               <p>
-                Register a customer in less than one minute.
+                {t("registerMinute", "Register a customer in less than one minute.")}
               </p>
             </div>
 
@@ -217,6 +243,8 @@ if (form.place === "OTHER") {
             onSubmit={handleSubmit}
           >
 
+            {formError && <div className="registration-error" role="alert">{formError}</div>}
+
             <div className="form-grid">
 
               {/* Full Name */}
@@ -225,16 +253,18 @@ if (form.place === "OTHER") {
 
                 <label>
                   <User size={16} />
-                  Full Name
+                  {t("fullName", "Full Name")}
                 </label>
 
                 <input
                   id="customerName"
                   type="text"
                   name="name"
-                  placeholder="Enter Customer Name"
+                  autoComplete="name"
+                  placeholder={t("enterName", "Enter Customer Name")}
                   value={form.name}
                   onChange={handleChange}
+                  onInput={handleChange}
                 />
 
               </div>
@@ -245,13 +275,15 @@ if (form.place === "OTHER") {
 
                 <label>
                   <Phone size={16} />
-                  Mobile Number
+                  {t("mobileNumber", "Mobile Number")}
                 </label>
 
                 <input
                   type="tel"
                   name="mobile"
-                  maxLength="10"
+                  inputMode="numeric"
+                  autoComplete="tel-national"
+                  maxLength="16"
                   placeholder="9876543210"
                   value={form.mobile}
                   onChange={handleChange}
@@ -265,15 +297,26 @@ if (form.place === "OTHER") {
 
                 <label>
                   <Cake size={16} />
-                  Birthday
+                  {t("birthday", "Birthday")}
                 </label>
 
-                <input
-                  type="date"
-                  name="birthday"
-                  value={form.birthday}
-                  onChange={handleChange}
-                />
+                <div className="dob-selects">
+                  <select value={form.birthdayDay} onChange={(event) => handleBirthdayChange("birthdayDay", event.target.value)} aria-label="Birthday date">
+                    <option value="">{t("date", "Date")}</option>
+                    {Array.from({ length: 31 }, (_, index) => index + 1).map((day) => <option key={day} value={day}>{day}</option>)}
+                  </select>
+                  <select value={form.birthdayMonth} onChange={(event) => handleBirthdayChange("birthdayMonth", event.target.value)} aria-label="Birthday month">
+                    <option value="">{t("month", "Month")}</option>
+                    {Array.from({ length: 12 }, (_, index) => (
+                      new Intl.DateTimeFormat(language === "kn" ? "kn-IN" : "en-IN", { month: "long" })
+                        .format(new Date(2020, index, 1))
+                    )).map((month, index) => <option key={month} value={index + 1}>{month}</option>)}
+                  </select>
+                  <select value={form.birthdayYear} onChange={(event) => handleBirthdayChange("birthdayYear", event.target.value)} aria-label="Birthday year">
+                    <option value="">{t("year", "Year")}</option>
+                    {Array.from({ length: 100 }, (_, index) => new Date().getFullYear() - index).map((year) => <option key={year} value={year}>{year}</option>)}
+                  </select>
+                </div>
 
               </div>
                             {/* Gender */}
@@ -282,7 +325,7 @@ if (form.place === "OTHER") {
 
                 <label>
                   <Users size={16} />
-                  Gender
+                  {t("gender", "Gender")}
                 </label>
 
                 <div className="gender-options">
@@ -295,7 +338,7 @@ if (form.place === "OTHER") {
                       checked={form.gender === "Male"}
                       onChange={handleChange}
                     />
-                    Male
+                    {t("male", "Male")}
                   </label>
 
                   <label className="radio-option">
@@ -306,7 +349,7 @@ if (form.place === "OTHER") {
                       checked={form.gender === "Female"}
                       onChange={handleChange}
                     />
-                    Female
+                    {t("female", "Female")}
                   </label>
 
                   <label className="radio-option">
@@ -317,7 +360,7 @@ if (form.place === "OTHER") {
                       checked={form.gender === "Other"}
                       onChange={handleChange}
                     />
-                    Other
+                    {t("other", "Other")}
                   </label>
 
                 </div>
@@ -330,7 +373,7 @@ if (form.place === "OTHER") {
 
                 <label>
                   <MapPin size={16} />
-                  Place / Town
+                  {t("placeTown", "Place / Town")}
                 </label>
 
                 <select
@@ -340,7 +383,7 @@ if (form.place === "OTHER") {
                 >
 
                   <option value="">
-                    Select Place
+                    {t("selectPlace", "Select Place")}
                   </option>
 
                   {places.map((place) => (
@@ -353,7 +396,7 @@ if (form.place === "OTHER") {
                   ))}
 
                   <option value="OTHER">
-                    ➕ Add New Place
+                    + {t("addPlace", "Add New Place")}
                   </option>
 
                 </select>
@@ -363,7 +406,7 @@ if (form.place === "OTHER") {
                   <input
                     type="text"
                     name="customPlace"
-                    placeholder="Enter New Place"
+                    placeholder={t("enterPlace", "Enter New Place")}
                     value={form.customPlace}
                     onChange={handleChange}
                   />
@@ -382,12 +425,15 @@ if (form.place === "OTHER") {
                 id="consent"
                 type="checkbox"
                 required
+                checked={form.marketingConsent}
+                onChange={(event) => setForm((prev) => ({
+                  ...prev,
+                  marketingConsent: event.target.checked,
+                }))}
               />
 
               <label htmlFor="consent">
-                I agree to receive WhatsApp messages,
-                birthday wishes and promotional offers
-                from LUCK-G'S Family Club.
+                {t("consent", "I agree to receive WhatsApp messages, birthday wishes and promotional offers from LUCK-G'S Family Club.")}
               </label>
 
             </div>
@@ -403,13 +449,17 @@ if (form.place === "OTHER") {
                     name: "",
                     mobile: "",
                     birthday: "",
+                    birthdayDay: "",
+                    birthdayMonth: "",
+                    birthdayYear: "",
                     gender: "",
                     place: "",
                     customPlace: "",
+                    marketingConsent: false,
                   })
                 }
               >
-                Reset
+                {t("reset", "Reset")}
               </button>
 
               <button
@@ -418,8 +468,8 @@ if (form.place === "OTHER") {
                 disabled={saving}
               >
                 {saving
-                  ? "Registering..."
-                  : "Register Customer"}
+                  ? t("registering", "Registering...")
+                  : t("registerCustomer", "Register Customer")}
               </button>
 
             </div>

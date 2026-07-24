@@ -8,7 +8,7 @@ function RewardCard({
   const statusClass =
     pass.status === "ACTIVE"
       ? "status-active"
-      : pass.status === "REDEEMED"
+      : pass.status?.toUpperCase() === "REDEEMED"
       ? "status-redeemed"
       : "status-expired";
 
@@ -86,7 +86,7 @@ function RewardCard({
           👁 View
         </button>
 
-        {pass.status === "ACTIVE" ? (
+        {pass.status?.toUpperCase() === "ACTIVE" ? (
 
           <button
             className="reward-btn reward-btn-redeem"

@@ -7,6 +7,7 @@ import {
   query,
   where,
   getDocs,
+  runTransaction,
 } from "firebase/firestore";
 
 import { db } from "../firebase/firebaseConfig";
@@ -188,6 +189,36 @@ export async function redeemRewardPass(
 /* =====================================================
    LOAD ALL REWARD PASSES
 ===================================================== */
+
+export async function redeemCustomerReward(rewardPassId) {
+  try {
+    const passRef = doc(db, "rewardPasses", rewardPassId);
+
+    return await runTransaction(db, async (transaction) => {
+      const pass = await transaction.get(passRef);
+
+      if (!pass.exists()) {
+        throw new Error("Reward pass not found.");
+      }
+
+      if (pass.data().status !== "ACTIVE" || pass.data().redeemed === true) {
+        return false;
+      }
+
+      transaction.update(passRef, {
+        status: "redeemed",
+        redeemed: true,
+        redeemedDate: serverTimestamp(),
+        redeemedAt: serverTimestamp(),
+      });
+
+      return true;
+    });
+  } catch (error) {
+    console.error("Customer reward redemption failed:", error);
+    throw error;
+  }
+}
 
 export async function getAllRewardPasses() {
   try {

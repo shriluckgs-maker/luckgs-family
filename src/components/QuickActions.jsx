@@ -4,6 +4,7 @@ import {
   Cake,
   BarChart3,
   Gift,
+  SlidersHorizontal,
   ArrowRight,
 } from "lucide-react";
 
@@ -12,6 +13,7 @@ function QuickActions({
   onCustomers,
   onBirthday,
   onRewardPasses,
+  onManageRewards,
   onReports,
 }) {
   const actions = [
@@ -42,6 +44,13 @@ function QuickActions({
       icon: <Gift size={28} />,
       color: "#F59E0B",
       action: onRewardPasses,
+    },
+    {
+      title: "Manage Spin Rewards",
+      subtitle: "Add or change lucky-spin prizes",
+      icon: <SlidersHorizontal size={28} />,
+      color: "#6B1525",
+      action: onManageRewards,
     },
     {
       title: "Reports",

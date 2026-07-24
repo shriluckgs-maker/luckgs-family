@@ -1,155 +1,72 @@
 import { useEffect, useState } from "react";
+import { ArrowLeft, CheckCircle2, Gift } from "lucide-react";
+import logo from "../assets/logo.jpeg";
 import "./luckyRewards.css";
-
 import RewardWheel from "../components/rewards/RewardWheel";
 import RewardPopup from "../components/rewards/RewardPopup";
-import { hasActiveRewardPass } from "../services/rewardPassService";
+import { claimLuckySpin, hasUsedLuckySpin } from "../services/luckySpinService";
+import LanguageToggle from "../components/LanguageToggle";
+import { translate } from "../utils/i18n";
 
-function LuckyRewards({ customer, onBack }) {
+function LuckyRewards({ language, onLanguageChange, customer, onBack }) {
+  const t = (key, english) => language === "kn" ? translate(language, key) : english;
   const [reward, setReward] = useState(null);
   const [checking, setChecking] = useState(true);
   const [alreadyClaimed, setAlreadyClaimed] = useState(false);
 
   useEffect(() => {
-    async function checkRewardPass() {
-      if (!customer) {
-        setChecking(false);
-        return;
-      }
-
-      try {
-        const exists = await hasActiveRewardPass(customer.id);
-        setAlreadyClaimed(exists);
-      } catch (error) {
-        console.error("Error checking Reward Pass:", error);
-      } finally {
-        setChecking(false);
-      }
+    async function checkLuckySpin() {
+      if (!customer) { setChecking(false); return; }
+      try { setAlreadyClaimed(await hasUsedLuckySpin(customer.id)); }
+      catch (error) { console.error("Error checking Lucky Spin:", error); }
+      finally { setChecking(false); }
     }
-
-    checkRewardPass();
+    checkLuckySpin();
   }, [customer]);
 
-  function handleWin(winner) {
-    setReward(winner);
+  async function handleWin(winner) {
+    try {
+      const claimed = await claimLuckySpin(customer, winner);
+      if (claimed) setReward(winner);
+      else setAlreadyClaimed(true);
+    } catch (error) {
+      console.error("Error claiming Lucky Spin:", error);
+    }
   }
 
   return (
     <div className="lucky-page">
+      <LanguageToggle language={language} onChange={onLanguageChange} />
       <div className="lucky-card">
+        <button className="lucky-back" onClick={onBack}><ArrowLeft size={17} /> Home</button>
+        <header className="lucky-header">
+          <img src={logo} alt="LUCK-G'S" className="lucky-logo" />
+          <span className={language === "kn" ? "kannada-brand" : ""}>
+            {language === "kn" ? "ಲಕ್-ಜಿ'ಸ್ ಕುಟುಂಬ ಕ್ಲಬ್" : "LUCK-G'S FAMILY CLUB"}
+          </span>
+          <h1>{t("oneSpinSurprise", "One spin. A little surprise.")}</h1>
+          <p>{t("welcomeRewardReady", "Your welcome reward is ready to reveal.")}</p>
+        </header>
 
-        <button
-          className="back-btn"
-          onClick={onBack}
-        >
-          ← Home
-        </button>
-
-        <h1>🎡 LUCK-G'S Lucky Rewards</h1>
-
-        <p className="subtitle">
-          Every new member receives one exclusive Reward Pass.
-        </p>
+        <section className="rewards-wallet" aria-label="Reward delivery status">
+          <div className="wallet-icon"><Gift size={22} /></div>
+          <div><span>{t("yourWheelReward", "YOUR WHEEL REWARD")}</span><strong>{t("spinToReveal", "Spin to reveal")}</strong></div>
+          <div className="wallet-status"><CheckCircle2 size={16} /><span>{t("redeemAfterSpin", "Redeem after your spin")}</span></div>
+        </section>
+        <section className="rewards-explainer"><Gift size={20} /><p>{t("redeemInstruction", "After you spin, tap Redeem Now. Your reward will be marked as redeemed automatically.")}</p></section>
 
         {customer && (
-          <div
-            style={{
-              marginTop: 20,
-              marginBottom: 25,
-              padding: 15,
-              background: "#FFF8E8",
-              border: "2px solid #D4AF37",
-              borderRadius: 12,
-              textAlign: "center",
-            }}
-          >
-            <h2
-              style={{
-                color: "#6B1525",
-                marginBottom: 8,
-              }}
-            >
-              Welcome,
-            </h2>
-
-            <h2
-              style={{
-                color: "#D4AF37",
-                margin: 0,
-              }}
-            >
-              {customer.name}
-            </h2>
-
-            <p
-              style={{
-                marginTop: 10,
-                color: "#666",
-              }}
-            >
-              Spin the wheel and unlock your exclusive Reward Pass.
-            </p>
+          <div className="member-welcome">
+            <img src={logo} alt="" className="member-logo" />
+            <div><span>{t("welcomeFamily", "Welcome to the family")}</span><h2>{customer.name}</h2><p>{t("oneLuckySpin", "You have one lucky spin to unlock your welcome reward.")}</p></div>
           </div>
         )}
 
-        {checking ? (
-          <div
-            style={{
-              marginTop: 30,
-              textAlign: "center",
-              color: "#6B1525",
-              fontWeight: "bold",
-            }}
-          >
-            Checking Reward Pass...
-          </div>
-        ) : alreadyClaimed ? (
-          <div
-            style={{
-              marginTop: 25,
-              padding: 25,
-              background: "#FFF5F5",
-              border: "2px solid #D9534F",
-              borderRadius: 15,
-              textAlign: "center",
-            }}
-          >
-            <h2 style={{ color: "#D9534F" }}>
-              🎁 Reward Already Claimed
-            </h2>
-
-            <p>
-              You have already claimed your
-              <strong> LUCK-G'S Reward Pass.</strong>
-            </p>
-
-            <p>
-              Thank you for being part of the
-              <strong> LUCK-G'S Family Club ❤️</strong>
-            </p>
-
-            <button
-              className="close-btn"
-              onClick={onBack}
-              style={{ marginTop: 20 }}
-            >
-              Back to Home
-            </button>
-          </div>
-        ) : (
-          <RewardWheel onWin={handleWin} />
-        )}
-
+        {checking ? <div className="reward-checking">{t("preparingReward", "Preparing your reward...")}</div> : alreadyClaimed ? (
+          <div className="claimed-message"><img src={logo} alt="LUCK-G'S" /><h2>{t("rewardClaimed", "Your welcome reward was claimed")}</h2><p>{t("thankYou", "Thank you for being part of the LUCK-G'S Family Club.")}</p><button className="close-btn" onClick={onBack}>{t("backHome", "Back to Home")}</button></div>
+        ) : <RewardWheel language={language} onWin={handleWin} logo={logo} />}
       </div>
-
-      <RewardPopup
-        reward={reward}
-        customer={customer}
-        onClose={() => {
-          setReward(null);
-          onBack();
-        }}
-      />
+      <RewardPopup language={language} reward={reward} customer={customer} onClose={() => { setReward(null); onBack(); }} />
     </div>
   );
 }

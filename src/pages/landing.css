@@ -19,8 +19,45 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-    padding:20px;
+    padding:145px 20px 20px;
     background:linear-gradient(180deg,#fffdf9,#f5efe6);
+    position:relative;
+}
+
+.devotional-header{
+    position:absolute;
+    top:14px;
+    left:18px;
+    right:18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    pointer-events:none;
+}
+
+.devotional-item{
+    width:190px;
+    text-align:center;
+}
+
+.devotional-item p{
+    color:#6B1525;
+    font-family:Georgia, serif;
+    font-size:12px;
+    font-weight:700;
+    line-height:1.25;
+    text-transform:uppercase;
+}
+
+.devotional-item img{
+    width:76px;
+    height:82px;
+    margin-top:6px;
+    border:2px solid #d4af37;
+    border-radius:50%;
+    object-fit:cover;
+    background:#fff;
+    box-shadow:0 4px 12px rgba(107,21,37,.18);
 }
 
 .landing-card{
@@ -163,4 +200,12 @@ body{
         font-size:17px;
     }
 
+}
+
+@media(max-width:520px){
+    .landing-page{ padding:125px 14px 18px; }
+    .devotional-header{ top:10px; left:8px; right:8px; }
+    .devotional-item{ width:47%; }
+    .devotional-item p{ font-size:10px; }
+    .devotional-item img{ width:65px; height:70px; }
 }

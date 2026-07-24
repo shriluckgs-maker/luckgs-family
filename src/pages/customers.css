@@ -32,6 +32,64 @@
     font-size:16px;
 }
 
+.directory-toolbar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.download-contacts-btn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-height:44px;
+    border:1px solid #D8C9C4;
+    background:white;
+    color:#6B1525;
+    padding:10px 16px;
+    border-radius:14px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.download-contacts-btn:hover:not(:disabled){
+    background:#FFF6F7;
+    border-color:#6B1525;
+}
+
+.download-contacts-btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.contact-download-message{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:22px;
+    padding:13px 15px;
+    border:1px solid #B9E2C7;
+    border-radius:14px;
+    color:#17633A;
+    background:#ECF9F0;
+    font-size:13px;
+    font-weight:600;
+}
+
+.contact-download-message span{
+    flex:1;
+}
+
+.contact-download-message button{
+    border:0;
+    color:#17633A;
+    background:transparent;
+    font:inherit;
+    font-size:12px;
+    cursor:pointer;
+}
+
 .back-btn{
     display:flex;
     align-items:center;
@@ -232,6 +290,20 @@
     background:#20BD5A;
 }
 
+.save-contact-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    color:#6B1525;
+    background:#F7EDEF;
+    white-space:nowrap;
+}
+
+.save-contact-btn:hover{
+    background:#EDD9DE;
+}
+
 /* =========================================
    EMPTY STATE
 ========================================= */
@@ -258,12 +330,36 @@ align-items:flex-start;
 gap:20px;
 }
 
+.directory-toolbar{
+width:100%;
+}
+
 }
 
 @media(max-width:768px){
 
 .customers-page{
 padding:20px;
+}
+
+.directory-toolbar{
+display:grid;
+grid-template-columns:1fr;
+}
+
+.directory-toolbar .back-btn,
+.download-contacts-btn{
+justify-content:center;
+width:100%;
+}
+
+.contact-download-message{
+align-items:flex-start;
+flex-wrap:wrap;
+}
+
+.contact-download-message button{
+margin-left:28px;
 }
 
 .customer-table th,
@@ -280,4 +376,31 @@ flex-direction:column;
 width:100%;
 }
 
+}
+
+.delete-customer-btn{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:#FEE2E2;
+    color:#B91C1C;
+}
+
+.delete-customer-btn:hover{
+    background:#FECACA;
+}
+
+.directory-error{
+    max-width:620px;
+    margin:80px auto;
+    padding:32px;
+    text-align:center;
+    background:#fff;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.directory-error p{
+    margin:14px 0 22px;
+    color:#6B7280;
 }

@@ -9,3 +9,15 @@ export async function getCustomers() {
     ...doc.data(),
   }));
 }
+
+export function getOnboardingStats(customers) {
+  return customers.reduce(
+    (stats, customer) => {
+      if (customer.whatsapp?.status === "sent") stats.whatsAppSent += 1;
+      if (customer.whatsapp?.status === "queued") stats.whatsAppQueued += 1;
+      if (customer.whatsapp?.status === "failed") stats.whatsAppFailed += 1;
+      return stats;
+    },
+    { whatsAppSent: 0, whatsAppQueued: 0, whatsAppFailed: 0 }
+  );
+}

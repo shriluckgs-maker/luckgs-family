@@ -1,0 +1,36 @@
+.language-toggle {
+  position: fixed;
+  z-index: 20;
+  top: 12px;
+  left: 50%;
+  display: inline-flex;
+  padding: 4px;
+  border: 1px solid rgba(107, 21, 37, .18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 7px 22px rgba(71, 25, 36, .12);
+  transform: translateX(-50%);
+  backdrop-filter: blur(12px);
+}
+
+.language-toggle button {
+  min-width: 76px;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 999px;
+  color: #6f6065;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.language-toggle button.active {
+  color: #fff;
+  background: #6b1525;
+}
+
+.kannada-brand {
+  font-weight: 900 !important;
+}

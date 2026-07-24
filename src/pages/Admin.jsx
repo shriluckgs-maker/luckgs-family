@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import "./home.css";
+import "./admin.css";
+import { RefreshCw, ShieldCheck } from "lucide-react";
+import logo from "../assets/logo.jpeg";
 
 import DashboardGrid from "../components/DashboardGrid";
 import ActionCenter from "../components/ActionCenter";
@@ -8,7 +11,7 @@ import QuickActions from "../components/QuickActions";
 import TodaysContacts from "../components/TodaysContacts";
 import MorningBriefing from "../components/MorningBriefing";
 
-import { getCustomers } from "../services/customerService";
+import { getCustomers, getOnboardingStats } from "../services/customerService";
 
 import {
   calculateBusinessHealth,
@@ -19,12 +22,17 @@ function Admin({
   onCustomers,
   onBirthday,
   onRewardPasses,
+  onManageRewards,
+  onRegister,
 }) {
   const [stats, setStats] = useState({
     totalCustomers: 0,
     birthdaysToday: 0,
     upcomingBirthdays: 0,
     newMembers: 0,
+    whatsAppSent: 0,
+    whatsAppQueued: 0,
+    whatsAppFailed: 0,
   });
 
   const [businessHealth, setBusinessHealth] = useState({
@@ -33,10 +41,6 @@ function Admin({
   });
 
   const [insights, setInsights] = useState([]);
-
-  useEffect(() => {
-    loadDashboard();
-  }, []);
 
   async function loadDashboard() {
     try {
@@ -63,7 +67,11 @@ function Admin({
         totalCustomers: customers.length,
         birthdaysToday,
         upcomingBirthdays: 0,
-        newMembers: customers.length,
+        newMembers: customers.filter((customer) => {
+          const joined = new Date(customer.joinedOn);
+          return joined.toDateString() === today.toDateString();
+        }).length,
+        ...getOnboardingStats(customers),
       });
 
       setBusinessHealth(
@@ -79,43 +87,63 @@ function Admin({
     }
   }
 
+  useEffect(() => {
+    // Dashboard values are loaded once from Firestore when this page opens.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadDashboard();
+  }, []);
+
   return (
-    <div className="container fade">
+    <main className="admin-page fade">
+      <div className="admin-shell">
+        <header className="admin-topbar">
+          <div className="admin-brand">
+            <img src={logo} alt="LUCK-G'S" />
+            <div>
+              <span><ShieldCheck size={13} /> ADMIN WORKSPACE</span>
+              <strong>LUCK-G'S Family</strong>
+            </div>
+          </div>
 
-      <div className="dashboard">
+          <button className="admin-refresh" type="button" onClick={loadDashboard}>
+            <RefreshCw size={17} />
+            <span>Refresh</span>
+          </button>
+        </header>
 
-        <MorningBriefing
-          stats={stats}
-          insights={insights}
-          businessHealth={businessHealth}
-        />
+        <div className="dashboard">
+          <MorningBriefing
+            stats={stats}
+            insights={insights}
+            businessHealth={businessHealth}
+          />
 
-        <DashboardGrid
-          stats={stats}
-          businessHealth={businessHealth}
-        />
+          <DashboardGrid
+            stats={stats}
+            businessHealth={businessHealth}
+          />
 
-        <ActionCenter
-          stats={stats}
-        />
+          <ActionCenter
+            stats={stats}
+          />
 
-        <AIInsights
-          insights={insights}
-        />
+          <AIInsights
+            insights={insights}
+          />
 
-        <TodaysContacts />
+          <TodaysContacts />
 
-        <QuickActions
-          onAddCustomer={() => {}}
-          onCustomers={onCustomers}
-          onBirthday={onBirthday}
-          onRewardPasses={onRewardPasses}
-          onReports={() => {}}
-        />
-
+          <QuickActions
+            onAddCustomer={onRegister}
+            onCustomers={onCustomers}
+            onBirthday={onBirthday}
+            onRewardPasses={onRewardPasses}
+            onManageRewards={onManageRewards}
+            onReports={() => {}}
+          />
+        </div>
       </div>
-
-    </div>
+    </main>
   );
 }
 
